@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 module cpu_tb(
 );
 
@@ -34,3 +35,19 @@ Memory mem(
 	.mem_read(mem_read),
 	.mem_write(mem_write)
 );
+
+//Set up clock
+initial begin
+clk = 1;
+forever
+#5 clk = ~clk;
+end
+
+//Set up reset
+initial begin
+rst = 0;
+#5 rst = 1;
+#5 rst = 0; 
+end
+
+endmodule

@@ -43,12 +43,24 @@ module reg_file(
     end    
 
 
+//Assign first read value
+if(rd0_addr == 0)
+{
+  assign rd0_data = 32'd 0;
+}
+else
+{
+  assign rd0_data = mem[rd0_addr];
+}
 
-       
- assign rd0_data = mem[rd0_addr];
- assign rd1_data = mem[rd1_addr];
-      
-
-  
+//Assign second read value
+if(rd1_addr == 0)
+{
+  assign rd1_data = 32'd 0;
+}
+else
+{
+  assign rd1_data = mem[rd1_addr];
+}  
 
 endmodule

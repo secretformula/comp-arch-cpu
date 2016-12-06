@@ -32,6 +32,9 @@ wire [31:0] rt_data;
 wire [31:0] rd_data;
 wire ovf;
 wire zero;
+wire alusrc1;
+wire alusrc2;
+wire memtoreg;
 
 reg_file regfile(
 	.clk(clk),
@@ -46,8 +49,8 @@ reg_file regfile(
 );
 
 inst_decoder decoder(
-	.instruction(instr),
 	.mem_write(mem_write),
+	.instruction(instr),
 	.mem_read(mem_read),
 	.ALUOp(aluOp),
 	.immediate_constant(constant),
@@ -55,6 +58,9 @@ inst_decoder decoder(
 	.rs_addr(rs_addr),
 	.rt_addr(rt_addr),
 	.rd_addr(rd_addr),
+	.ALUSrc1(alusrc1),
+	.ALUSrc2(alusrc2),
+	.mem_to_reg(memtoreg)
 );
 
 alu alu(

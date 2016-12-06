@@ -86,11 +86,11 @@ module alu(
 
         if(a < b)
         {
-          f = 32'd 1;
+          f = 32'd1;
         }
         else
         {
-          f = 32'd 0;
+          f = 32'd0;
         }
   
     	end

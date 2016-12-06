@@ -7,6 +7,7 @@ output ALUSrc1,
 output ALUSrc2,
 output [2:0] ALUOp,
 output mem_write,
+output mem_read,
 output mem_to_reg,
 output [4:0] rs_addr,
 output [4:0] rt_addr,
@@ -75,6 +76,7 @@ case(opcode)
        immediate_constant = instruction [15:0];
        ALUOp = 3'b000;
        mem_to_reg = 1'b1;
+       mem_read = 1'b1;
        ALUSrc2 = 1'b1;
      end
      

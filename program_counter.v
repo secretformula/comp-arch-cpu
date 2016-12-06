@@ -1,10 +1,10 @@
 module program_counter(input clk, 
           input rst, 
-          input [15:0] immediate_value, 
+          input [31:0] immediate_value, 
           input zero, 
-          output [15:0] pc_out);
+          output [31:0] pc_out);
           
-  reg [7:0] pc_out;
+  reg [31:0] pc_out;
   
   always@(posedge clk)
     begin

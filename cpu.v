@@ -54,7 +54,7 @@ inst_decoder decoder(
 	.reg_write(reg_write),
 	.rs_addr(rs_addr),
 	.rt_addr(rt_addr),
-	.rd_addr(rd_addr),
+	.rd_addr(rd_addr)
 );
 
 alu alu(

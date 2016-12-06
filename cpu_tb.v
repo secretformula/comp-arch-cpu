@@ -2,8 +2,8 @@
 module cpu_tb(
 );
 
-wire clk;
-wire rst;
+reg clk;
+reg rst;
 
 wire [31:0] instruction_addr;
 wire [31:0] instruction;

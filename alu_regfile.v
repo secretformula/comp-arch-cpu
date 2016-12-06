@@ -4,15 +4,15 @@ module alu_regfile(
     input [4:0] read_addr1,
     input [4:0] read_addr2,
     input [4:0] write_addr,
-    input [32:0] write_data,
+    input [31:0] write_data,
     input reg_write,
     input reg_read,
     input [15:0] instr,
     input ALUSrc1,
     input ALUSrc2,
     input [2:0] ALUOp,
-    output [32:0] read_data1,
-    output [32:0] read_data2,
+    output [31:0] read_data1,
+    output [31:0] read_data2,
     output [31:0] alu_input1,
     output [31:0] alu_input2,
     output [31:0] alu_result,
@@ -25,7 +25,7 @@ wire rst;
 wire [4:0] read_addr1;
 wire [4:0] read_addr2;
 wire [4:0] write_addr;
-wire [32:0] write_data;
+wire [31:0] write_data;
 wire reg_write;
 wire reg_read;
 //reg read_data1;
@@ -33,8 +33,8 @@ wire reg_read;
 
  wire [31:0] alu_input1;
  wire [31:0] alu_input2;
- wire [32:0] read_data1;
- wire [32:0] read_data2; 
+ wire [31:0] read_data1;
+ wire [31:0] read_data2; 
     
 //Set up reg file
 reg_file register(

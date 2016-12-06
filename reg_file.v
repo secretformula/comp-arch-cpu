@@ -12,18 +12,18 @@ module reg_file(
 
   input [4:0] wr_addr,
 
-  input [32:0] wr_data,
+  input [31:0] wr_data,
 
-  output [32:0] rd0_data,
+  output [31:0] rd0_data,
 
-  output [32:0] rd1_data
+  output [31:0] rd1_data
 
 );
 
 
-  reg [32:0] mem [0:31];
-  wire [32:0] rd1_data;
-  wire [32:0] rd0_data;
+  reg [31:0] mem [0:31];
+  wire [31:0] rd1_data;
+  wire [31:0] rd0_data;
 
   integer i;
 
@@ -43,12 +43,24 @@ module reg_file(
     end    
 
 
+//Assign first read value
+if(rd0_addr == 0)
+{
+  assign rd0_data = 32'd 0;
+}
+else
+{
+  assign rd0_data = mem[rd0_addr];
+}
 
-       
- assign rd0_data = mem[rd0_addr];
- assign rd1_data = mem[rd1_addr];
-      
-
-  
+//Assign second read value
+if(rd1_addr == 0)
+{
+  assign rd1_data = 32'd 0;
+}
+else
+{
+  assign rd1_data = mem[rd1_addr];
+}  
 
 endmodule

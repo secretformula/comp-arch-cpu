@@ -56,20 +56,20 @@ case(opcode)
     end
      
      //R-Type Instructions -- opcode is 0, will check funct
-     6'd 0:
-      case(funct)
+    6'd 0:
+    case(funct)
 
-       6'h 20: //add
-            begin
-              ALUOp = 3'b000;
-              reg_dst = 1'b1;
-              end
-       6'h 2A:
-            begin
-              ALUOp = 3'b 100;
-              reg_dst = 1'b1;
+     6'h 20: //add
+          begin
+            ALUOp = 3'b000;
+            reg_dst = 1'b1;
             end
-     
+     6'h 2A:
+          begin
+            ALUOp = 3'b 100;
+            reg_dst = 1'b1;
+          end
+   
      // I-Type Instructions:        
      6'h 23: //lw
           begin
@@ -93,9 +93,7 @@ case(opcode)
        immediate_constant = instruction [15:0];
        ALUOp = 3'b000;
        ALUSrc2 = 1'b1;
-     end   
-     
-     
+     end       
     
 endcase
 end

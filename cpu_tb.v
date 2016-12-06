@@ -17,8 +17,8 @@ wire mem_write;
 Cpu cpu_dut(
 	.clk(clk),
 	.rst(rst),
-	.instruction_addr(instruction_addr),
-	.instruction(instruction),
+	.instr_addr(instruction_addr),
+	.instr(instruction),
 	.data_addr(data_addr),
 	.data_in(data_in),
 	.data_out(data_out),
@@ -27,7 +27,7 @@ Cpu cpu_dut(
 );
 
 Memory mem(
-	.inst_add(instruction_addr),
+	.inst_addr(instruction_addr),
 	.instr(instruction),
 	.data_addr(data_addr),
 	.data_in(data_in),

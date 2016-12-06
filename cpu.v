@@ -17,8 +17,8 @@ input wire [31:0] instr;
 output reg [31:0] data_addr;
 output reg [31:0] data_out;
 input wire [31:0] data_in;
-output reg mem_write;
-output reg mem_read;
+output wire mem_write;
+output wire mem_read;
 
 wire [2:0] aluOp;
 wire [15:0] constant;
@@ -61,7 +61,7 @@ alu alu(
 	.a(rs_data),
 	.b(rt_data),
 	.sel(aluOp),
-	.c(rd_data),
+	.f(rd_data),
 	.ovf(ovf),
 	.zero(zero)
 );

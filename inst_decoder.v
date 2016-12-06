@@ -26,6 +26,7 @@ reg ALUSrc1;
 reg ALUSrc2;
 reg [2:0] ALUOp;
 reg mem_write;
+reg mem_read;
 reg mem_to_reg;
 wire [4:0] rs_addr;
 wire [4:0] rt_addr;
@@ -69,7 +70,7 @@ case(opcode)
             ALUOp = 3'b 100;
             reg_dst = 1'b1;
           end
-   
+   endcase
      // I-Type Instructions:        
      6'h 23: //lw
           begin

@@ -1,3 +1,5 @@
+`timescale 1ns/100ps
+
 module Cpu(
 	clk,
 	rst,
@@ -12,10 +14,10 @@ module Cpu(
 
 input wire clk;
 input wire rst;
-output reg [31:0] instr_addr;
+output wire [31:0] instr_addr;
 input wire [31:0] instr;
-output reg [31:0] data_addr;
-output reg [31:0] data_out;
+output wire [31:0] data_addr;
+output wire [31:0] data_out;
 input wire [31:0] data_in;
 output wire mem_write;
 output wire mem_read;
@@ -30,11 +32,33 @@ wire reg_write;
 wire [31:0] rs_data;
 wire [31:0] rt_data;
 wire [31:0] rd_data;
+wire [31:0] rd_data_post;
 wire ovf;
 wire zero;
 wire alusrc1;
 wire alusrc2;
 wire memtoreg;
+wire reg_dst;
+
+wire [31:0] aluin2;
+wire [31:0] constant_ext;
+
+wire [25:0] jump_immediate;
+wire jump;
+
+wire noop;
+
+
+program_counter pc(
+	.clk(clk),
+	.rst(rst),
+	.immediate_value(constant_ext),
+	.zero(zero),
+	.pc_out(instr_addr),
+	.jump(jump),
+	.jump_immediate(jump_immediate,
+	.noop(noop))
+);
 
 reg_file regfile(
 	.clk(clk),
@@ -45,7 +69,7 @@ reg_file regfile(
 	.rd0_data(rs_data),
 	.rd1_data(rt_data),
 	.wr_addr(rd_addr),
-	.wr_data(rd_data)
+	.wr_data(rd_data_post)
 );
 
 inst_decoder decoder(
@@ -55,21 +79,47 @@ inst_decoder decoder(
 	.ALUOp(aluOp),
 	.immediate_constant(constant),
 	.reg_write(reg_write),
-	.rs_addr(rs_addr),
-	.rt_addr(rt_addr),
-	.rd_addr(rd_addr),
+	.read_reg1_addr(rs_addr),
+	.read_reg2_addr(rt_addr),
+	.write_reg_addr(rd_addr),
 	.ALUSrc1(alusrc1),
 	.ALUSrc2(alusrc2),
-	.mem_to_reg(memtoreg)
+	.mem_to_reg(memtoreg),
+	.reg_dst(reg_dst),
+	.jump_immediate(jump_immediate),
+	.jump(jump),
+	.noop(noop)
 );
 
 alu alu(
 	.a(rs_data),
-	.b(rt_data),
+	.b(aluin2),
 	.sel(aluOp),
 	.f(rd_data),
 	.ovf(ovf),
 	.zero(zero)
+);
+
+assign data_addr = rd_data;
+assign data_out = rt_data;
+
+sign_extend extend(
+	.in(constant),
+	.out(constant_ext)
+);
+
+mux alu_src_mux(
+	.a(rt_data),
+	.b(constant_ext),
+	.sel(alusrc2),
+	.out(aluin2)
+);
+
+mux reg_write_mux(
+	.a(rd_data),
+	.b(data_in),
+	.sel(memtoreg),
+	.out(rd_data_post)
 );
 
 endmodule

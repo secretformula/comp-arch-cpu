@@ -56,11 +56,11 @@ module alu(
  
     	end
  
-  	3'b001: //Not
+  	3'b001: //Noop
  
     	begin
  
-    	f = ~b;
+    	f = f;
  
     	end
  
@@ -84,7 +84,7 @@ module alu(
  
     	begin
 
-        if(a < b)
+        if($signed(a) < $signed(b))
           f <= 32'd1;
         else
           f <= 32'd0;
@@ -120,7 +120,7 @@ module alu(
  
   	default:
     	begin
-    	f = 32'd0;    	
+    	f = 32'd0;   	
     	end
 	endcase
   end

@@ -28,7 +28,7 @@ module reg_file(
   integer i;
 
 
-  always @ (posedge clk) //Rising Edge
+  always @ (posedge clk or posedge rst) //Rising Edge
     begin
         if(rst) //If we are resetting our memory
             begin

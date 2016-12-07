@@ -39,6 +39,8 @@ wire alusrc2;
 wire memtoreg;
 wire reg_dst;
 
+wire aluin2;
+
 program_counter pc(
 	.clk(clk),
 	.rst(rst),
@@ -77,11 +79,18 @@ inst_decoder decoder(
 
 alu alu(
 	.a(rs_data),
-	.b(rt_data),
+	.b(aluin2),
 	.sel(aluOp),
 	.f(rd_data),
 	.ovf(ovf),
 	.zero(zero)
+);
+
+mux alu_src_mux(
+	.a(rt_data),
+	.b(constant),
+	.sel(alusrc2),
+	.out(aluin2)
 );
 
 endmodule

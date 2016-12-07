@@ -10,14 +10,14 @@ module program_counter(input clk,
     begin
        if(rst)
             begin
-                pc_out <= 0;
+                pc_out <= 32'h3000;
             end
        else
         begin
             if(zero)
                 pc_out <= pc_out + immediate_value;
             else
-                pc_out <= pc_out + 1;             
+                pc_out <= pc_out + 4;             
         end 
     end
 

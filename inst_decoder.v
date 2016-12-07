@@ -11,7 +11,9 @@ output mem_read,
 output mem_to_reg,
 output [4:0] read_reg1_addr,
 output [4:0] read_reg2_addr,
-output [4:0] write_reg_addr
+output [4:0] write_reg_addr,
+output [25:0] jump_immediate,
+output jump
     );
     
 wire [31:0] instruction;
@@ -52,6 +54,8 @@ ALUSrc2 = 1'b0;
 read_reg1_addr = instruction[25:21]; //rs_addr
 read_reg2_addr = instruction[20:16]; //rt_addr
 write_reg_addr = instruction[15:11]; //rd_addr
+jump_immediate = instruction[25:0];
+jump = 0;
 case(opcode)
 
     //Branch Instructions
@@ -106,7 +110,14 @@ case(opcode)
        write_reg_addr = instruction[20:16]; //rt_addr
        ALUOp = 3'b000;
        ALUSrc2 = 1'b1;
-     end       
+     end     
+
+     //Jump
+     6'd 2:
+      begin
+      jump = 1;
+          
+        end  
     
 endcase
 end

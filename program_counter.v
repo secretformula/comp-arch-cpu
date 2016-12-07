@@ -15,7 +15,7 @@ module program_counter(input clk,
        else
         begin
             if(zero)
-                pc_out <= pc_out + immediate_value;
+                pc_out <= pc_out + immediate_value * 4;
             else
                 pc_out <= pc_out + 4;             
         end 

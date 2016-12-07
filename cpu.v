@@ -46,7 +46,7 @@ wire [31:0] constant_ext;
 program_counter pc(
 	.clk(clk),
 	.rst(rst),
-	.immediate_value(constant),
+	.immediate_value(constant_ext),
 	.zero(zero),
 	.pc_out(instr_addr)
 );

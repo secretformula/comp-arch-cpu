@@ -9,9 +9,10 @@ output [2:0] ALUOp,
 output mem_write,
 output mem_read,
 output mem_to_reg,
-output [4:0] rs_addr,
-output [4:0] rt_addr,
-output [4:0] rd_addr
+output [4:0] read_reg1_addr,
+output [4:0] read_reg2_addr,
+output [4:0] write_reg_addr,
+output [4:0] 
     );
     
 wire [31:0] instruction;
@@ -28,16 +29,18 @@ reg [2:0] ALUOp;
 reg mem_write;
 reg mem_read;
 reg mem_to_reg;
-wire [4:0] rs_addr;
-wire [4:0] rt_addr;
-wire [4:0] rd_addr;
+wire [4:0] read_reg1_addr;
+wire [4:0] read_reg2_addr;
+wire [4:0] write_reg_addr;
 
-assign rs_addr = instruction[25:21];
-assign rt_addr = instruction[20:16];
-assign rd_addr = instruction[15:11];
+
+//assign rs_addr = instruction[25:21];
+//assign rt_addr = instruction[20:16];
+//assign rd_addr = instruction[15:11];
 
 always @(*)
 begin
+
 ALUSrc1 = 1'b0;
 mem_write = 1'b0;
 mem_to_reg = 1'b0;
@@ -46,6 +49,10 @@ opcode = instruction[31:26];
 funct = instruction[5:0];
 reg_write = 1'b1;
 ALUSrc2 = 1'b0;
+
+read_reg1_addr = instruction[25:21]; //rs_addr
+read_reg2_addr = instruction[20:16]; //rt_addr
+write_reg_addr = instruction[15:11]; //rd_addr
 case(opcode)
 
     //Branch Instructions
@@ -54,6 +61,7 @@ case(opcode)
     immediate_constant = instruction [15:0];
     ALUOp = 3'b110;
     reg_write = 0;
+    write_reg_addr = instruction[20:16]; //rt_addr
     end
      
      //R-Type Instructions -- opcode is 0, will check funct
@@ -64,11 +72,13 @@ case(opcode)
           begin
             ALUOp = 3'b000;
             reg_dst = 1'b1;
+            write_reg_addr = instruction[15:11]; //rt_addr
             end
      6'h 2A:
           begin
             ALUOp = 3'b 100;
             reg_dst = 1'b1;
+            write_reg_addr = instruction[15:11]; //rt_addr
           end
    endcase
      // I-Type Instructions:        
@@ -79,6 +89,7 @@ case(opcode)
        mem_to_reg = 1'b1;
        mem_read = 1'b1;
        ALUSrc2 = 1'b1;
+       write_reg_addr = instruction[20:16]; //rt_addr
      end
      
      6'h 2b: //sw
@@ -88,10 +99,12 @@ case(opcode)
        mem_write = 1'b1;
        reg_write = 1'b0;
        ALUSrc2 = 1'b1;
+       write_reg_addr = instruction[20:16]; //rt_addr
      end
      6'd 8: //addi
           begin
        immediate_constant = instruction [15:0];
+       write_reg_addr = instruction[20:16]; //rt_addr
        ALUOp = 3'b000;
        ALUSrc2 = 1'b1;
      end       

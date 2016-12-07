@@ -12,8 +12,8 @@ output mem_to_reg,
 output [4:0] read_reg1_addr,
 output [4:0] read_reg2_addr,
 output [4:0] write_reg_addr,
-output [25:0] jump_immediate,
-output jump
+output reg [25:0] jump_immediate,
+output reg jump
     );
     
 wire [31:0] instruction;
@@ -34,7 +34,6 @@ reg [4:0] read_reg1_addr;
 reg [4:0] read_reg2_addr;
 reg [4:0] write_reg_addr;
 
-
 //assign rs_addr = instruction[25:21];
 //assign rt_addr = instruction[20:16];
 //assign rd_addr = instruction[15:11];
@@ -50,6 +49,7 @@ opcode = instruction[31:26];
 funct = instruction[5:0];
 reg_write = 1'b1;
 ALUSrc2 = 1'b0;
+ALUOp = 0;
 
 read_reg1_addr = instruction[25:21]; //rs_addr
 read_reg2_addr = instruction[20:16]; //rt_addr

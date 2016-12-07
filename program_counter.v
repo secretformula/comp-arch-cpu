@@ -17,10 +17,11 @@ module program_counter(input clk,
        else
         begin
             if(zero)
-                pc_out <= pc_out + immediate_value * 4;
-            else if(jump)
-                pc_out <= {(pc_out + 4)[31:28], jump_immediate, 2'b00};
-            else
+                pc_out <= pc_out + 4 + immediate_value * 4;
+            else if(jump) begin
+		pc_out = pc_out + 4;
+                pc_out = {pc_out[31:28], jump_immediate, 2'b00};
+            end else
                 pc_out <= pc_out + 4;             
         end 
     end

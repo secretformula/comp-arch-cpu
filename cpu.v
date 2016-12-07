@@ -52,7 +52,9 @@ program_counter pc(
 	.rst(rst),
 	.immediate_value(constant_ext),
 	.zero(zero),
-	.pc_out(instr_addr)
+	.pc_out(instr_addr),
+	.jump(jump),
+	.jump_immediate(jump_immediate)
 );
 
 reg_file regfile(

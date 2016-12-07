@@ -10,7 +10,7 @@ module program_counter(input clk,
     begin
        if(rst)
             begin
-                pc_out <= 32'h3000;
+                pc_out <= 32'h3000 - 4;
             end
        else
         begin

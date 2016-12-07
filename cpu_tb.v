@@ -30,15 +30,16 @@ Memory mem(
 	.inst_addr(instruction_addr),
 	.instr(instruction),
 	.data_addr(data_addr),
-	.data_in(data_in),
-	.data_out(data_out),
+	.data_in(data_out),
+	.data_out(data_in),
 	.mem_read(mem_read),
 	.mem_write(mem_write)
 );
 
 //Set up clock
 initial begin
-clk = 1;
+clk = 0;
+#15 clk = 1;
 forever
 #5 clk = ~clk;
 end

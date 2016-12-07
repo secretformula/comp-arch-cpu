@@ -4,24 +4,17 @@
 
 module sign_extend(in, out);
 	input [15:0] in;
-	output [31:0] out = 0;
-
-	reg add_ones [31:0] = 32'hFFFF0000
-
-
+	output reg [31:0] out;
 
 	always @ (in)
 	begin
 		//If sign Most significant bit is a 1, then we'll populate
 		//first 16 bits with ones
-		if(in[15] == 1)
-		{
-			out = add_ones + in;
-		}
-		else 
-		{
-			out = out + in;
-		}
+		if(in[15] == 1) begin
+			out <= 32'hFFFF0000 | in;
+		end else begin
+			out <= in;
+		end
 	end
 
 endmodule

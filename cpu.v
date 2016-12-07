@@ -16,8 +16,8 @@ input wire clk;
 input wire rst;
 output wire [31:0] instr_addr;
 input wire [31:0] instr;
-output reg [31:0] data_addr;
-output reg [31:0] data_out;
+output wire [31:0] data_addr;
+output wire [31:0] data_out;
 input wire [31:0] data_in;
 output wire mem_write;
 output wire mem_read;
@@ -32,6 +32,7 @@ wire reg_write;
 wire [31:0] rs_data;
 wire [31:0] rt_data;
 wire [31:0] rd_data;
+wire [31:0] rd_data_post;
 wire ovf;
 wire zero;
 wire alusrc1;
@@ -39,7 +40,8 @@ wire alusrc2;
 wire memtoreg;
 wire reg_dst;
 
-wire aluin2;
+wire [31:0] aluin2;
+wire [31:0] constant_ext;
 
 program_counter pc(
 	.clk(clk),
@@ -58,7 +60,7 @@ reg_file regfile(
 	.rd0_data(rs_data),
 	.rd1_data(rt_data),
 	.wr_addr(rd_addr),
-	.wr_data(rd_data)
+	.wr_data(rd_data_post)
 );
 
 inst_decoder decoder(
@@ -86,11 +88,26 @@ alu alu(
 	.zero(zero)
 );
 
+assign data_addr = rd_data;
+assign data_out = rt_data;
+
+sign_extend extend(
+	.in(constant),
+	.out(constant_ext)
+);
+
 mux alu_src_mux(
 	.a(rt_data),
-	.b(constant),
+	.b(constant_ext),
 	.sel(alusrc2),
 	.out(aluin2)
+);
+
+mux reg_write_mux(
+	.a(rd_data),
+	.b(data_in),
+	.sel(memtoreg),
+	.out(rd_data_post)
 );
 
 endmodule

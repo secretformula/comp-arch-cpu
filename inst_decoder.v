@@ -11,8 +11,7 @@ output mem_read,
 output mem_to_reg,
 output [4:0] read_reg1_addr,
 output [4:0] read_reg2_addr,
-output [4:0] write_reg_addr,
-output [4:0] 
+output [4:0] write_reg_addr
     );
     
 wire [31:0] instruction;
@@ -29,9 +28,9 @@ reg [2:0] ALUOp;
 reg mem_write;
 reg mem_read;
 reg mem_to_reg;
-wire [4:0] read_reg1_addr;
-wire [4:0] read_reg2_addr;
-wire [4:0] write_reg_addr;
+reg [4:0] read_reg1_addr;
+reg [4:0] read_reg2_addr;
+reg [4:0] write_reg_addr;
 
 
 //assign rs_addr = instruction[25:21];

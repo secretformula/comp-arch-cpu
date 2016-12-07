@@ -43,6 +43,10 @@ wire reg_dst;
 wire [31:0] aluin2;
 wire [31:0] constant_ext;
 
+wire [25:0] jump_immediate;
+wire jump;
+
+
 program_counter pc(
 	.clk(clk),
 	.rst(rst),
@@ -76,7 +80,9 @@ inst_decoder decoder(
 	.ALUSrc1(alusrc1),
 	.ALUSrc2(alusrc2),
 	.mem_to_reg(memtoreg),
-	.reg_dst(reg_dst)
+	.reg_dst(reg_dst),
+	.jump_immediate(jump_immediate),
+	.jump(jump)
 );
 
 alu alu(

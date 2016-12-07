@@ -56,11 +56,11 @@ module alu(
  
     	end
  
-  	3'b001: //Not
+  	3'b001: //Noop
  
     	begin
  
-    	f = ~b;
+    	f = f;
  
     	end
  

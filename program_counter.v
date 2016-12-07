@@ -3,7 +3,8 @@ module program_counter(input clk,
           input [31:0] immediate_value, 
           input zero,
           input jump,
-          input [25:0] jump_immediate, 
+          input [25:0] jump_immediate,
+          input noop, 
           output [31:0] pc_out);
           
   reg [31:0] pc_out;
@@ -21,6 +22,8 @@ module program_counter(input clk,
             else if(jump) begin
 		pc_out = pc_out + 4;
                 pc_out = {pc_out[31:28], jump_immediate, 2'b00};
+            end else if(noop) begin
+                pc_out = pc_out;
             end else
                 pc_out <= pc_out + 4;             
         end 

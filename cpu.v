@@ -46,6 +46,8 @@ wire [31:0] constant_ext;
 wire [25:0] jump_immediate;
 wire jump;
 
+wire noop;
+
 
 program_counter pc(
 	.clk(clk),
@@ -54,7 +56,8 @@ program_counter pc(
 	.zero(zero),
 	.pc_out(instr_addr),
 	.jump(jump),
-	.jump_immediate(jump_immediate)
+	.jump_immediate(jump_immediate,
+	.noop(noop))
 );
 
 reg_file regfile(
@@ -84,7 +87,8 @@ inst_decoder decoder(
 	.mem_to_reg(memtoreg),
 	.reg_dst(reg_dst),
 	.jump_immediate(jump_immediate),
-	.jump(jump)
+	.jump(jump),
+	.noop(noop)
 );
 
 alu alu(

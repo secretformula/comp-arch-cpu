@@ -13,7 +13,8 @@ output [4:0] read_reg1_addr,
 output [4:0] read_reg2_addr,
 output [4:0] write_reg_addr,
 output reg [25:0] jump_immediate,
-output reg jump
+output reg jump,
+output reg noop
     );
     
 wire [31:0] instruction;
@@ -56,6 +57,7 @@ read_reg2_addr = instruction[20:16]; //rt_addr
 write_reg_addr = instruction[15:11]; //rd_addr
 jump_immediate = instruction[25:0];
 jump = 0;
+noop = 0;
 case(opcode)
 
     //Branch Instructions
@@ -119,6 +121,13 @@ case(opcode)
           
         end  
     
+    //Halt
+    6'h 3f:
+    begin
+      noop = 1;
+      ALUOp = 3'b001;
+
+    end
 endcase
 end
 

@@ -6,7 +6,7 @@ module program_counter(input clk,
           
   reg [31:0] pc_out;
   
-  always@(posedge clk)
+  always@(posedge clk or posedge rst)
     begin
        if(rst)
             begin

@@ -1,3 +1,5 @@
+`timescale 1ns/100ps
+
 module Cpu(
 	clk,
 	rst,
@@ -12,7 +14,7 @@ module Cpu(
 
 input wire clk;
 input wire rst;
-output reg [31:0] instr_addr;
+output wire [31:0] instr_addr;
 input wire [31:0] instr;
 output reg [31:0] data_addr;
 output reg [31:0] data_out;
@@ -35,6 +37,15 @@ wire zero;
 wire alusrc1;
 wire alusrc2;
 wire memtoreg;
+wire reg_dst;
+
+program_counter pc(
+	.clk(clk),
+	.rst(rst),
+	.immediate_value(constant),
+	.zero(zero),
+	.pc_out(instr_addr)
+);
 
 reg_file regfile(
 	.clk(clk),
@@ -60,7 +71,8 @@ inst_decoder decoder(
 	.rd_addr(rd_addr),
 	.ALUSrc1(alusrc1),
 	.ALUSrc2(alusrc2),
-	.mem_to_reg(memtoreg)
+	.mem_to_reg(memtoreg),
+	.reg_dst(reg_dst)
 );
 
 alu alu(

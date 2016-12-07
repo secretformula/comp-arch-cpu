@@ -1,0 +1,10 @@
+Hi, this was written by Nigil and Nate
+Please run our test bench: cpu_tb.v
+
+Minmax Program
+Use minmax hex file by modifying memory.v
+Simulate for 1500ns
+
+Add2 Program
+Use add2 hex file by modifying memory.v
+Simulate for 50ns

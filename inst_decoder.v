@@ -125,6 +125,7 @@ case(opcode)
     6'h 3f:
     begin
       noop = 1;
+      reg_write = 0;
       ALUOp = 3'b001;
 
     end

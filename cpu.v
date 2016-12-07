@@ -56,8 +56,8 @@ program_counter pc(
 	.zero(zero),
 	.pc_out(instr_addr),
 	.jump(jump),
-	.jump_immediate(jump_immediate,
-	.noop(noop))
+	.jump_immediate(jump_immediate),
+	.noop(noop)
 );
 
 reg_file regfile(

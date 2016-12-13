@@ -3,11 +3,13 @@ module program_counter_tb(
 
 reg clk;
 reg rst;
+reg [31:0] next_addr
 wire [31:0] counter_value;
 
 program_counter pc(
 	.clk(clk),
 	.rst(rst),
+	.next_addr(next_addr),
 	.counter_value(counter_value)
 );
 

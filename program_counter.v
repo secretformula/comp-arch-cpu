@@ -1,6 +1,7 @@
 module program_counter(
 	input wire clk,
 	input wire rst,
+	input wire [31:0] next_addr,
 	output reg [31:0] counter_value
 );
 
@@ -11,7 +12,7 @@ end
 
 // Counting
 always @ (posedge clk) begin
-	counter_value <= counter_value + 4;
+	counter_value <= jump_addr;
 end
 
 endmodule

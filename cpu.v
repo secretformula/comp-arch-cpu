@@ -59,20 +59,13 @@ fd_pipeline_register fd_reg(
 wire [4:0] rs_addr;
 wire [4:0] rt_addr;
 wire [4:0] rd_addr;
-wire [4:0] reg_write_addr;
+wire [4:0] mw_reg_write_addr;
 wire [15:0] immediate;
 
-assign rs_addr = instruction[25:21];
-assign rt_addr = instruction[20:16];
-assign rd_addr = instruction[15:11];
-assign immediate = instruction [15:0];
-
-mux5 write_reg_mux(
-	.a(rt_addr),
-	.b(rd_addr),
-	.sel(),
-	.result(reg_write_addr)
-);
+assign rs_addr = buffered_instruction[25:21];
+assign rt_addr = buffered_instruction[20:16];
+assign rd_addr = buffered_instruction[15:11];
+assign immediate = buffered_instruction [15:0];
 
 wire [15:0] reg_read_0;
 wire [15:0] reg_read_1;
@@ -83,7 +76,7 @@ register_file registers(
 	.write_en(),
 	.read_addr_0(rs_addr),
 	.read_addr_1(rt_addr),
-	.write_addr(reg_write_addr),
+	.write_addr(mw_reg_write_addr),
 	.read_data_0(reg_read_0),
 	.read_data_1(reg_read_1)
 );
@@ -91,6 +84,25 @@ register_file registers(
 sign_extend1632 immediate_extender(
 	.in(immediate),
 	.out(immediate_signext)
+);
+
+wire [2:0] alu_op;
+wire mem_read;
+wire mem_write;
+wire jump;
+wire reg_write;
+wire mem_reg;
+wire reg_dst;
+
+controller cpu_controller(
+	.instruction(buffered_instruction),
+	.alu_op(alu_op),
+	.mem_read(mem_read),
+	.mem_write(mem_write),
+	.jump(jump),
+	.reg_write(reg_write),
+	.mem_reg(mem_reg),
+	.reg_dst(reg_dst)
 );
 
 wire [31:0] reg_read_buf_0;
@@ -112,6 +124,11 @@ dx_pipeline_register dx_reg(
  * Execute stage
  */
 
-
+mux5 write_reg_mux(
+	.a(rt_addr),
+	.b(rd_addr),
+	.sel(),
+	.result(reg_write_addr)
+);
 
 endmodule

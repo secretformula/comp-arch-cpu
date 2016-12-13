@@ -125,6 +125,7 @@ wire [31:0] immediate_dx;
 wire [2:0] alu_op_dx;
 wire [4:0] rt_addr_dx;
 wire [4:0] rd_addr_dx;
+wire [4:0] rs_addr_dx;
 wire mem_read_dx;
 wire mem_write_dx;
 wire jump_dx;
@@ -150,6 +151,7 @@ dx_pipeline_register dx_reg(
 	.reg_dst(reg_dst),
 	.rt_addr(rt_addr),
 	.rd_addr(rd_addr),
+	.rs_addr(rs_addr),
 	.alu_src(alu_src),
 	.branch(branch),
 	.pc_value(pc_value_dx),
@@ -165,6 +167,7 @@ dx_pipeline_register dx_reg(
 	.reg_dst_buffered(reg_dst_dx),
 	.rt_addr_buffered(rt_addr_dx),
 	.rd_addr_buffered(rd_addr_dx),
+	.rs_addr_buffered(rs_addr_dx),
 	.alu_src_buffered(alu_src_dx),
 	.branch_buffered(branch_dx)
 );
@@ -172,6 +175,24 @@ dx_pipeline_register dx_reg(
 /*
  * Execute stage
  */
+
+wire [31:0] alu_result_xm;
+wire [4:0] write_reg_addr_xm;
+wire reg_write_xm;
+wire [1:0] alu_a_mux_sel;
+wire [1:0] alu_b_mux_sel;
+
+forwarding_unit forwarding_unit(
+	.rst(rst),
+	.rs_addr_dx(rs_addr_dx),
+	.rt_addr_dx(rt_addr_dx),
+	.write_reg_addr_xm(write_reg_addr_xm),
+	.write_reg_xm(reg_write_xm),
+	.write_reg_addr_mw(write_reg_addr_mw),
+	.write_reg_mw(reg_write_mw),
+	.alu_a_mux_sel(alu_a_mux_sel),
+	.alu_b_mux_sel(alu_b_mux_sel)
+);
 
 wire [31:0] shifted_immediate;
 sll2_32 jump_shifter(
@@ -195,10 +216,29 @@ mux5 write_reg_mux(
 	.result(reg_write_addr_dx)
 );
 
+wire [31:0] alu_a_forwarded_data;
+wire [31:0] alu_b_forwarded_data;
+
+mux32_3 alu_forwarding_mux_0(
+	.a(reg_read_0_dx),
+	.b(reg_write_data_mw),
+	.c(alu_result_xm),
+	.sel(alu_a_mux_sel),
+	.result(alu_a_forwarded_data)
+);
+
+mux32_3 alu_forwarding_mux_1(
+	.a(reg_read_1_dx),
+	.b(reg_write_data_mw),
+	.c(alu_result_xm),
+	.sel(alu_b_mux_sel),
+	.result(alu_b_forwarded_data)
+);
+
 wire [31:0] alu_b_data;
 
 mux32 alu_src_mux(
-	.a(reg_read_1_dx),
+	.a(alu_b_forwarded_data),
 	.b(immediate_dx),
 	.sel(alu_src_dx),
 	.result(alu_b_data)
@@ -208,22 +248,20 @@ wire [31:0] alu_result;
 wire alu_zero;
 
 alu cpu_alu(
-	.a(reg_read_0_dx),
+	.a(alu_a_forwarded_data),
 	.b(alu_b_data),
 	.op(alu_op_dx),
 	.result(alu_result),
 	.zero(alu_zero)
 );
 
-wire [31:0] alu_result_xm;
+
 wire [31:0] mem_write_data_xm;
 wire alu_zero_xm;
-wire [4:0] write_reg_addr_xm;
 wire mem_read_xm;
 wire mem_write_xm;
 wire mem_reg_xm;
 wire branch_xm;
-wire reg_write_xm;
 
 xm_pipeline_register xm_reg(
 	.clk(clk),

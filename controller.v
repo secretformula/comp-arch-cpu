@@ -27,6 +27,7 @@ always @ (posedge rst) begin
 	alu_op <= 3'h1;
 	alu_src <= 1'b0;
 	branch <= 1'b0;
+	jump <= 1'b0;
 end
 
 always @ (*) begin
@@ -48,7 +49,7 @@ always @ (*) begin
 		mem_write <= 1'b0;
 		mem_reg <= 1'b0;
 		reg_dst <= 1'b1;
-		reg_write <= 1'b0;
+		reg_write <= 1'b1;
 		alu_src <= 1'b0;
 		branch <= 1'b0;
 		case(r_funct)
@@ -90,7 +91,7 @@ always @ (*) begin
 		mem_write <= 1'b0;
 		mem_reg <= 1'b0;
 		reg_dst <= 1'b0;
-		reg_write <= 1'b0;
+		reg_write <= 1'b1;
 		alu_op <= 3'h0;
 		alu_src <= 1'b1;
 		branch <= 1'b0;

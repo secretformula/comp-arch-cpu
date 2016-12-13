@@ -20,7 +20,7 @@ end
 always @ (posedge clk) begin
 	mem_read_data_buffered <= mem_read_data;
 	alu_result_buffered <= alu_result;
-	write_reg_addr_buffered <= write_reg_addr_buffered;
+	write_reg_addr_buffered <= write_reg_addr;
 	reg_write_buffered <= reg_write;
 	mem_reg_buffered <= mem_reg;
 end

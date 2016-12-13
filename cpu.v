@@ -216,6 +216,7 @@ alu cpu_alu(
 );
 
 wire [31:0] alu_result_xm;
+wire [31:0] mem_write_data_xm;
 wire alu_zero_xm;
 wire [4:0] write_reg_addr_xm;
 wire mem_read_xm;
@@ -236,6 +237,7 @@ xm_pipeline_register xm_reg(
 	.mem_reg(mem_reg_dx),
 	.branch(branch_dx),
 	.reg_write(reg_write_dx),
+	.mem_write_data(reg_read_1_dx),
 	.alu_result_buffered(alu_result_xm),
 	.alu_zero_buffered(alu_zero_xm),
 	.jump_result_buffered(jump_result_xm),
@@ -244,13 +246,16 @@ xm_pipeline_register xm_reg(
 	.mem_write_buffered(mem_write_xm),
 	.mem_reg_buffered(mem_reg_xm),
 	.branch_buffered(branch_xm),
-	.reg_write_buffered(reg_write_xm)
+	.reg_write_buffered(reg_write_xm),
+	.mem_write_data_buffered(mem_write_data_xm)
 );
 
 /*
  * Memory Stage
  */
 
+// Some explict assigns for structure
+assign mem_write_data = mem_write_data_xm;
 assign data_addr = alu_result_xm;
 assign mem_read_en = mem_read_xm;
 assign mem_write_en = mem_write_xm;

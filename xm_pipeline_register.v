@@ -10,6 +10,7 @@ module xm_pipeline_register(
 	input wire mem_reg,
 	input wire branch,
 	input wire reg_write,
+	input wire [31:0] mem_write_data,
 	output reg [31:0] alu_result_buffered,
 	output reg alu_zero_buffered,
 	output reg [31:0] jump_result_buffered,
@@ -18,7 +19,8 @@ module xm_pipeline_register(
 	output reg mem_write_buffered,
 	output reg mem_reg_buffered,
 	output reg branch_buffered,
-	output reg reg_write_buffered
+	output reg reg_write_buffered,
+	output reg [31:0] mem_write_data_buffered
 );
 
 always @ (posedge rst) begin
@@ -36,6 +38,7 @@ always @ (posedge clk) begin
 	mem_reg_buffered <= mem_reg;
 	branch_buffered <= branch;
 	reg_write_buffered <= reg_write;
+	mem_write_data_buffered <= mem_write_data;
 end
 
 endmodule

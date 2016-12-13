@@ -52,6 +52,8 @@ always @ (posedge clk) begin
 	reg_dst_buffered <= reg_dst;
 	alu_src_buffered <= alu_src;
 	branch_buffered <= branch;
+	rt_addr_buffered <= rt_addr;
+	rd_addr_buffered <= rd_addr;
 end
 
 endmodule

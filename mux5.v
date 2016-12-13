@@ -5,6 +5,6 @@ module mux5(
 	output wire [4:0] result
 );
 
-assign result = sel ? a : b;
+assign result = (sel == 1'b1) ? b : a;
 
 endmodule

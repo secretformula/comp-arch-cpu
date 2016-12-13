@@ -30,7 +30,7 @@ wire [31:0] pc_value;
 program_counter pc(
 	.clk(clk),
 	.rst(rst),
-	.next_instr_addr(next_instr_addr),
+	.next_addr(next_instr_addr),
 	.counter_value(pc_value)
 );
 
@@ -69,8 +69,8 @@ assign rt_addr = buffered_instruction[20:16];
 assign rd_addr = buffered_instruction[15:11];
 assign immediate = buffered_instruction [15:0];
 
-wire [15:0] reg_read_0;
-wire [15:0] reg_read_1;
+wire [31:0] reg_read_0;
+wire [31:0] reg_read_1;
 wire reg_write_mw;
 wire [31:0] reg_write_data_mw;
 
@@ -85,6 +85,8 @@ register_file registers(
 	.read_data_0(reg_read_0),
 	.read_data_1(reg_read_1)
 );
+
+wire [31:0] immediate_signext;
 
 sign_extend1632 immediate_extender(
 	.in(immediate),
@@ -116,7 +118,7 @@ controller cpu_controller(
 
 wire [31:0] reg_read_0_dx;
 wire [31:0] reg_read_1_dx;
-wire [31:0] dx_pc_value_dx;
+wire [31:0] pc_value_dx;
 wire [31:0] immediate_dx;
 wire [2:0] alu_op_dx;
 wire [4:0] rt_addr_dx;
@@ -147,7 +149,7 @@ dx_pipeline_register dx_reg(
 	.rd_addr(rd_addr),
 	.alu_src(alu_src),
 	.branch(branch),
-	.pc_value(dx_pc_value),
+	.pc_value(pc_value_dx),
 	.read_data_buffered_0(reg_read_0_dx),
 	.read_data_buffered_1(reg_read_1_dx),
 	.immediate_buffered(immediate_dx),
@@ -176,7 +178,7 @@ sll2_32 jump_shifter(
 
 wire [31:0] jump_adder_result;
 add32u jump_adder(
-	.a(dx_pc_value),
+	.a(pc_value_dx),
 	.b(shifted_immediate),
 	.result(jump_adder_result)
 );

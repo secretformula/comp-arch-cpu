@@ -6,39 +6,41 @@ module cpu(
 	output wire [31:0] data_addr,
 	input wire [31:0] mem_read_data,
 	output wire [31:0] mem_write_data,
-	output wire mem_read,
-	output wire mem_write
+	output wire mem_read_en,
+	output wire mem_write_en
 );
 
 /*
  * Instruction fetch stage
  */
-wire [31:0] pc_value;
+
 wire [31:0] next_instr_addr;
 wire [31:0] pc_value_next;
-wire jump;
+wire pc_src_xm;
+wire [31:0] jump_result_xm;
 
 mux32 pc_input_mux(
 	.a(pc_value_next),
-	.b(),
-	.sel(jump)
+	.b(jump_result_xm),
+	.sel(pc_src_xm),
 	.result(next_instr_addr)
 );
 
+wire [31:0] pc_value;
 program_counter pc(
 	.clk(clk),
 	.rst(rst),
-	.next_instr_addr(next_instr_addr)
+	.next_instr_addr(next_instr_addr),
 	.counter_value(pc_value)
 );
 
 wire [31:0] counter_adder_b;
-counter_adder_b = 4;
+assign counter_adder_b = 4;
 add32u counter_adder(
 	.a(pc_value),
 	.b(counter_adder_b),
 	.result(pc_value_next)
-)
+);
 
 assign instr_addr = pc_value;
 
@@ -130,7 +132,7 @@ dx_pipeline_register dx_reg(
 	.pc_value_next(buffered_next_pc_value),
 	.read_data_0(reg_read_0),
 	.read_data_1(reg_read_1),
-	.immediate(immediate_signext)
+	.immediate(immediate_signext),
 	.alu_op(alu_op),
 	.mem_read(mem_read),
 	.mem_write(mem_write),
@@ -206,7 +208,7 @@ alu cpu_alu(
 );
 
 wire [31:0] alu_result_xm;
-wire [31:0] jump_result_xm;
+wire alu_zero_xm;
 wire [4:0] write_reg_addr_xm;
 wire mem_read_xm;
 wire mem_write_xm;
@@ -216,6 +218,7 @@ wire branch_xm;
 xm_pipeline_register xm_reg(
 	.clk(clk),
 	.alu_result(alu_result),
+	.alu_zero(alu_zero),
 	.jump_result(jump_adder_result),
 	.write_reg_addr(reg_write_addr_dx),
 	.mem_read(mem_read_dx),
@@ -223,16 +226,23 @@ xm_pipeline_register xm_reg(
 	.mem_reg(mem_reg_dx),
 	.branch(branch_dx),
 	.alu_result_buffered(alu_result_xm),
+	.alu_zero_buffered(alu_zero_xm),
 	.jump_result_buffered(jump_result_xm),
 	.write_reg_addr_buffered(write_reg_addr_xm),
 	.mem_read_buffered(mem_read_xm),
 	.mem_write_buffered(mem_write_xm),
 	.mem_reg_buffered(mem_reg_xm),
-	.branch_buffered(branch_xm),
+	.branch_buffered(branch_xm)
 );
 
 /*
  * Memory Stage
  */
+
+assign data_addr = alu_result_xm;
+assign mem_read_en = mem_read_xm;
+assign mem_write_en = mem_write_xm;
+
+assign pc_src_xm = branch_xm && alu_zero_xm;
 
 endmodule

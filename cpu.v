@@ -59,7 +59,7 @@ fd_pipeline_register fd_reg(
 wire [4:0] rs_addr;
 wire [4:0] rt_addr;
 wire [4:0] rd_addr;
-wire [4:0] mw_reg_write_addr;
+wire [4:0] reg_write_addr_mw;
 wire [15:0] immediate;
 
 assign rs_addr = buffered_instruction[25:21];
@@ -76,7 +76,7 @@ register_file registers(
 	.write_en(),
 	.read_addr_0(rs_addr),
 	.read_addr_1(rt_addr),
-	.write_addr(mw_reg_write_addr),
+	.write_addr(reg_write_addr_mw),
 	.read_data_0(reg_read_0),
 	.read_data_1(reg_read_1)
 );
@@ -105,9 +105,19 @@ controller cpu_controller(
 	.reg_dst(reg_dst)
 );
 
-wire [31:0] reg_read_buf_0;
-wire [31:0] reg_read_buf_1;
-wire [31:0] dx_pc_value;
+wire [31:0] reg_read_0_dx;
+wire [31:0] reg_read_1_dx;
+wire [31:0] dx_pc_value_dx;
+wire [31:0] immediate_dx;
+wire [2:0] alu_op_dx;
+wire [4:0] rt_addr_dx;
+wire [4:0] rd_addr_dx;
+wire mem_read_dx;
+wire mem_write_dx;
+wire jump_dx;
+wire reg_write_dx;
+wire mem_reg_dx;
+wire reg_dst_dx;
 
 dx_pipeline_register dx_reg(
 	.clk(clk),
@@ -115,20 +125,45 @@ dx_pipeline_register dx_reg(
 	.read_data_0(reg_read_0),
 	.read_data_1(reg_read_1),
 	.immediate(immediate_signext)
+	.alu_op(alu_op),
+	.mem_read(mem_read),
+	.mem_write(mem_write),
+	.jump(jump),
+	.reg_write(reg_write),
+	.mem_reg(mem_reg),
+	.reg_dst(reg_dst),
+	.rt_addr(rt_addr),
+	.rd_addr(rd_addr),
 	.pc_value(dx_pc_value),
-	.read_data_buffered_0(reg_read_buf_0),
-	.read_data_buffered_1(reg_read_buf_1),
+	.read_data_buffered_0(reg_read_0_dx),
+	.read_data_buffered_1(reg_read_1_dx),
+	.immediate_buffered(immediate_dx),
+	.alu_op_buffered(alu_op_dx),
+	.mem_read_buffered(mem_read_dx),
+	.mem_write_buffered(mem_write_dx),
+	.jump_buffered(jump_dx),
+	.reg_write_buffered(reg_write_dx),
+	.mem_reg_buffered(mem_reg_dx),
+	.reg_dst_buffered(reg_dst_dx),
+	.rt_addr_buffered(rt_addr_dx),
+	.rd_addr_buffered(rd_addr_dx)
 );
 
 /*
  * Execute stage
  */
 
+wire [4:0] reg_write_addr_dx;
+
 mux5 write_reg_mux(
-	.a(rt_addr),
-	.b(rd_addr),
-	.sel(),
-	.result(reg_write_addr)
+	.a(rt_addr_dx),
+	.b(rd_addr_dx),
+	.sel(reg_dst_dx),
+	.result(reg_write_addr_dx)
+);
+
+alu cpu_alu(
+	
 );
 
 endmodule

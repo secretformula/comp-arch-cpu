@@ -12,7 +12,7 @@ end
 
 // Counting
 always @ (posedge clk) begin
-	counter_value <= jump_addr;
+	counter_value <= next_addr;
 end
 
 endmodule

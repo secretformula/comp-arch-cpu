@@ -3,7 +3,7 @@ module program_counter_tb(
 
 reg clk;
 reg rst;
-reg [31:0] next_addr
+reg [31:0] next_addr;
 wire [31:0] counter_value;
 
 program_counter pc(

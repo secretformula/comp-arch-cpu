@@ -6,7 +6,7 @@ module controller(
 	output reg jump,
 	output reg reg_write,
 	output reg reg_dst,
-	output reg mem_reg,
+	output reg mem_reg
 );
 
 wire [5:0] opcode;
@@ -14,15 +14,6 @@ wire [5:0] r_funct;
 
 assign opcode = instruction[31:26];
 assign r_funct = instruction[5:0];
-
-/*
-mem_read = 1'b0;
-mem_write = 1'b0;
-mem_reg = 1'b0;
-reg_dst = 1'b0;
-reg_write = 1'b1;
-alu_op = 0;
-*/
 
 always @ (*) begin
 	case(opcode)

@@ -7,7 +7,7 @@ module program_counter(
 
 // Reset
 always @ (posedge rst) begin
-	counter_value <= 32'h3000;
+	counter_value <= 32'h3000 - 32'd4;
 end
 
 // Counting

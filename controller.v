@@ -1,4 +1,5 @@
 module controller(
+	input wire rst,
 	input wire [31:0] instruction,
 	output reg [2:0] alu_op,
 	output reg mem_read,
@@ -16,6 +17,17 @@ wire [5:0] r_funct;
 
 assign opcode = instruction[31:26];
 assign r_funct = instruction[5:0];
+
+always @ (posedge rst) begin
+	mem_read <= 1'b0;
+	mem_write <= 1'b0;
+	mem_reg <= 1'b0;
+	reg_dst <= 1'b0;
+	reg_write <= 1'b0;
+	alu_op <= 3'h1;
+	alu_src <= 1'b0;
+	branch <= 1'b0;
+end
 
 always @ (*) begin
 	case(opcode)

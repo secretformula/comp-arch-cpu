@@ -1,5 +1,6 @@
 module dx_pipeline_register(
 	input wire clk,
+	input wire rst,
 	input wire [31:0] pc_value_next,
 	input wire [31:0] read_data_0,
 	input wire [31:0] read_data_1,
@@ -31,6 +32,11 @@ module dx_pipeline_register(
 	output reg alu_src_buffered,
 	output reg branch_buffered
 );
+
+always @ (posedge rst) begin
+	branch_buffered = 1'b0;
+	alu_op_buffered = 3'h1; // Noop
+end
 
 always @ (posedge clk) begin
 	pc_value <= pc_value_next;

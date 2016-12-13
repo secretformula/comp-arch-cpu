@@ -1,5 +1,6 @@
 module mw_pipeline_register(
 	input wire clk,
+	input wire rst,
 	input wire [31:0] mem_read_data,
 	input wire [31:0] alu_result,
 	input wire [4:0] write_reg_addr,
@@ -11,6 +12,10 @@ module mw_pipeline_register(
 	output reg reg_write_buffered,
 	output reg mem_reg_buffered
 );
+
+always @ (posedge rst) begin
+
+end
 
 always @ (posedge clk) begin
 	mem_read_data_buffered <= mem_read_data;

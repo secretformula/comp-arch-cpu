@@ -49,6 +49,7 @@ wire [31:0] buffered_next_pc_value;
 
 fd_pipeline_register fd_reg(
 	.clk(clk),
+	.rst(rst),
 	.pc_value_next(pc_value_next),
 	.next_instruction(instr),
 	.instruction(buffered_instruction),
@@ -104,6 +105,7 @@ wire alu_src;
 wire branch;
 
 controller cpu_controller(
+	.rst(rst),
 	.instruction(buffered_instruction),
 	.alu_op(alu_op),
 	.mem_read(mem_read),
@@ -134,6 +136,7 @@ wire branch_dx;
 
 dx_pipeline_register dx_reg(
 	.clk(clk),
+	.rst(rst),
 	.pc_value_next(buffered_next_pc_value),
 	.read_data_0(reg_read_0),
 	.read_data_1(reg_read_1),
@@ -223,6 +226,7 @@ wire reg_write_xm;
 
 xm_pipeline_register xm_reg(
 	.clk(clk),
+	.rst(rst),
 	.alu_result(alu_result),
 	.alu_zero(alu_zero),
 	.jump_result(jump_adder_result),
@@ -259,6 +263,7 @@ wire mem_reg_mw;
 
 mw_pipeline_register mw_reg(
 	.clk(clk),
+	.rst(rst),
 	.mem_read_data(mem_read_data),
 	.alu_result(alu_result_xm),
 	.write_reg_addr(write_reg_addr_xm),

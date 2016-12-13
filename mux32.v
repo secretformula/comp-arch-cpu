@@ -5,6 +5,6 @@ module mux32(
 	output wire [31:0] result
 );
 
-assign result = sel ? a : b;
+assign result = (sel == 1'b1) ? b : a;
 
 endmodule

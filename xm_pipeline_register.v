@@ -1,5 +1,6 @@
 module xm_pipeline_register(
 	input wire clk,
+	input wire rst,
 	input wire [31:0] alu_result,
 	input wire alu_zero,
 	input wire [31:0] jump_result,
@@ -19,6 +20,11 @@ module xm_pipeline_register(
 	output reg branch_buffered,
 	output reg reg_write_buffered
 );
+
+always @ (posedge rst) begin
+	branch_buffered = 1'b0;
+	alu_zero_buffered = 1'b0;
+end
 
 always @ (posedge clk) begin
 	alu_result_buffered <= alu_result;

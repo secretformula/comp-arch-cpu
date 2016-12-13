@@ -18,7 +18,7 @@ assign read_data_0 = (read_addr_0 != 0) ? register_data[read_addr_0] : 32'b0;
 assign read_data_1 = (read_addr_1 != 0) ? register_data[read_addr_1] : 32'b0;
 
 // Register writing
-always @ (posedge clk) begin
+always @ (negedge clk) begin
 	if(write_en && write_addr != 0) begin
 		register_data[write_addr] <= write_data;
 	end

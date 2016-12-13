@@ -6,7 +6,9 @@ module controller(
 	output reg jump,
 	output reg reg_write,
 	output reg reg_dst,
-	output reg mem_reg
+	output reg mem_reg,
+	output reg alu_src,
+	output reg branch
 );
 
 wire [5:0] opcode;
@@ -25,6 +27,8 @@ always @ (*) begin
 		reg_dst <= 1'b0;
 		reg_write <= 1'b0;
 		alu_op <= 3'h6;
+		alu_src <= 1'b0;
+		branch <= 1'b1;
 	end
 	6'h0: // R type instructions
 	begin
@@ -33,6 +37,8 @@ always @ (*) begin
 		mem_reg <= 1'b0;
 		reg_dst <= 1'b1;
 		reg_write <= 1'b0;
+		alu_src <= 1'b0;
+		branch <= 1'b0;
 		case(r_funct)
 		6'h20: // add
 		begin
@@ -52,6 +58,8 @@ always @ (*) begin
 		reg_dst <= 1'b0;
 		reg_write <= 1'b1;
 		alu_op <= 3'h0;
+		alu_src <= 1'b1;
+		branch <= 1'b0;
 	end
 	6'h2b: // sw
 	begin
@@ -61,6 +69,8 @@ always @ (*) begin
 		reg_dst <= 1'b0;
 		reg_write <= 1'b0;
 		alu_op <= 3'h0;
+		alu_src <= 1'b1;
+		branch <= 1'b0;
 	end
 	6'h08: // addi
 	begin
@@ -70,10 +80,13 @@ always @ (*) begin
 		reg_dst <= 1'b0;
 		reg_write <= 1'b0;
 		alu_op <= 3'h0;
+		alu_src <= 1'b1;
+		branch <= 1'b0;
 	end
 	6'h02: // jump
 	begin
 		jump <= 1'b1;
+		branch <= 1'b0;
 	end
 	6'h3f: // halt
 	begin

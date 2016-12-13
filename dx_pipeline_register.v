@@ -13,6 +13,8 @@ module dx_pipeline_register(
 	input wire reg_dst,
 	input wire [4:0] rt_addr,
 	input wire [4:0] rd_addr,
+	input wire alu_src,
+	input wire branch,
 	output reg [31:0] pc_value,
 	output reg [31:0] read_data_buffered_0,
 	output reg [31:0] read_data_buffered_1,
@@ -25,7 +27,9 @@ module dx_pipeline_register(
 	output reg mem_reg_buffered,
 	output reg reg_dst_buffered,
 	output reg [4:0] rt_addr_buffered,
-	output reg [4:0] rd_addr_buffered
+	output reg [4:0] rd_addr_buffered,
+	output reg alu_src_buffered,
+	output reg branch_buffered
 );
 
 always @ (posedge clk) begin
@@ -40,6 +44,8 @@ always @ (posedge clk) begin
 	reg_write_buffered <= reg_write;
 	mem_reg_buffered <= mem_reg;
 	reg_dst_buffered <= reg_dst;
+	alu_src_buffered <= alu_src;
+	branch_buffered <= branch;
 end
 
 endmodule

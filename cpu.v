@@ -93,6 +93,8 @@ wire jump;
 wire reg_write;
 wire mem_reg;
 wire reg_dst;
+wire alu_src;
+wire branch;
 
 controller cpu_controller(
 	.instruction(buffered_instruction),
@@ -102,7 +104,9 @@ controller cpu_controller(
 	.jump(jump),
 	.reg_write(reg_write),
 	.mem_reg(mem_reg),
-	.reg_dst(reg_dst)
+	.reg_dst(reg_dst),
+	.alu_src(alu_src),
+	.branch(branch)
 );
 
 wire [31:0] reg_read_0_dx;
@@ -118,6 +122,8 @@ wire jump_dx;
 wire reg_write_dx;
 wire mem_reg_dx;
 wire reg_dst_dx;
+wire alu_src_dx;
+wire branch_dx;
 
 dx_pipeline_register dx_reg(
 	.clk(clk),
@@ -134,6 +140,8 @@ dx_pipeline_register dx_reg(
 	.reg_dst(reg_dst),
 	.rt_addr(rt_addr),
 	.rd_addr(rd_addr),
+	.alu_src(alu_src),
+	.branch(branch),
 	.pc_value(dx_pc_value),
 	.read_data_buffered_0(reg_read_0_dx),
 	.read_data_buffered_1(reg_read_1_dx),
@@ -146,12 +154,27 @@ dx_pipeline_register dx_reg(
 	.mem_reg_buffered(mem_reg_dx),
 	.reg_dst_buffered(reg_dst_dx),
 	.rt_addr_buffered(rt_addr_dx),
-	.rd_addr_buffered(rd_addr_dx)
+	.rd_addr_buffered(rd_addr_dx),
+	.alu_src_buffered(alu_src_dx),
+	.branch_buffered(branch_dx)
 );
 
 /*
  * Execute stage
  */
+
+wire [31:0] shifted_immediate;
+sll2_32 jump_shifter(
+	.in(immediate_dx),
+	.out(shifted_immediate)
+);
+
+wire [31:0] jump_adder_result;
+add32u jump_adder(
+	.a(dx_pc_value),
+	.b(shifted_immediate),
+	.result(jump_adder_result)
+);
 
 wire [4:0] reg_write_addr_dx;
 
@@ -162,8 +185,54 @@ mux5 write_reg_mux(
 	.result(reg_write_addr_dx)
 );
 
-alu cpu_alu(
-	
+wire [31:0] alu_b_data;
+
+mux32 alu_src_mux(
+	.a(reg_read_1_dx),
+	.b(immediate_dx),
+	.sel(alu_src_dx),
+	.result(alu_b_data)
 );
+
+wire [31:0] alu_result;
+wire alu_zero;
+
+alu cpu_alu(
+	.a(reg_read_0_dx),
+	.b(alu_b_data),
+	.op(alu_op_dx),
+	.result(alu_result),
+	.zero(alu_zero)
+);
+
+wire [31:0] alu_result_xm;
+wire [31:0] jump_result_xm;
+wire [4:0] write_reg_addr_xm;
+wire mem_read_xm;
+wire mem_write_xm;
+wire mem_reg_xm;
+wire branch_xm;
+
+xm_pipeline_register xm_reg(
+	.clk(clk),
+	.alu_result(alu_result),
+	.jump_result(jump_adder_result),
+	.write_reg_addr(reg_write_addr_dx),
+	.mem_read(mem_read_dx),
+	.mem_write(mem_write_dx),
+	.mem_reg(mem_reg_dx),
+	.branch(branch_dx),
+	.alu_result_buffered(alu_result_xm),
+	.jump_result_buffered(jump_result_xm),
+	.write_reg_addr_buffered(write_reg_addr_xm),
+	.mem_read_buffered(mem_read_xm),
+	.mem_write_buffered(mem_write_xm),
+	.mem_reg_buffered(mem_reg_xm),
+	.branch_buffered(branch_xm),
+);
+
+/*
+ * Memory Stage
+ */
 
 endmodule

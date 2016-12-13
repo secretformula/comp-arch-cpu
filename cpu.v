@@ -61,7 +61,7 @@ fd_pipeline_register fd_reg(
 wire [4:0] rs_addr;
 wire [4:0] rt_addr;
 wire [4:0] rd_addr;
-wire [4:0] reg_write_addr_mw;
+wire [4:0] write_reg_addr_mw;
 wire [15:0] immediate;
 
 assign rs_addr = buffered_instruction[25:21];
@@ -71,14 +71,17 @@ assign immediate = buffered_instruction [15:0];
 
 wire [15:0] reg_read_0;
 wire [15:0] reg_read_1;
+wire reg_write_mw;
+wire [31:0] reg_write_data_mw;
 
 register_file registers(
 	.clk(clk),
 	.rst(rst),
-	.write_en(),
+	.write_en(reg_write_mw),
 	.read_addr_0(rs_addr),
 	.read_addr_1(rt_addr),
-	.write_addr(reg_write_addr_mw),
+	.write_addr(write_reg_addr_mw),
+	.write_data(reg_write_data_mw),
 	.read_data_0(reg_read_0),
 	.read_data_1(reg_read_1)
 );
@@ -214,6 +217,7 @@ wire mem_read_xm;
 wire mem_write_xm;
 wire mem_reg_xm;
 wire branch_xm;
+wire reg_write_xm;
 
 xm_pipeline_register xm_reg(
 	.clk(clk),
@@ -225,6 +229,7 @@ xm_pipeline_register xm_reg(
 	.mem_write(mem_write_dx),
 	.mem_reg(mem_reg_dx),
 	.branch(branch_dx),
+	.reg_write(reg_write_dx),
 	.alu_result_buffered(alu_result_xm),
 	.alu_zero_buffered(alu_zero_xm),
 	.jump_result_buffered(jump_result_xm),
@@ -232,7 +237,8 @@ xm_pipeline_register xm_reg(
 	.mem_read_buffered(mem_read_xm),
 	.mem_write_buffered(mem_write_xm),
 	.mem_reg_buffered(mem_reg_xm),
-	.branch_buffered(branch_xm)
+	.branch_buffered(branch_xm),
+	.reg_write_buffered(reg_write_xm)
 );
 
 /*
@@ -244,5 +250,34 @@ assign mem_read_en = mem_read_xm;
 assign mem_write_en = mem_write_xm;
 
 assign pc_src_xm = branch_xm && alu_zero_xm;
+
+wire [31:0] mem_read_data_mw;
+wire [31:0] alu_result_mw;
+wire mem_reg_mw;
+
+mw_pipeline_register mw_reg(
+	.clk(clk),
+	.mem_read_data(mem_read_data),
+	.alu_result(alu_result_xm),
+	.write_reg_addr(write_reg_addr_xm),
+	.reg_write(reg_write_xm),
+	.mem_reg(mem_reg_xm),
+	.mem_read_data_buffered(mem_read_data_mw),
+	.alu_result_buffered(alu_result_mw),
+	.write_reg_addr_buffered(write_reg_addr_mw),
+	.reg_write_buffered(reg_write_mw),
+	.mem_reg_buffered(mem_reg_mw)
+);
+
+/*
+ * Writeback Stage
+ */
+
+mux32 write_content_mux( // Mux is opposite polarity of the drawing
+	.a(alu_result_mw),
+	.b(mem_read_data_mw),
+	.sel(mem_reg_mw),
+	.result(reg_write_data_mw)
+);
 
 endmodule

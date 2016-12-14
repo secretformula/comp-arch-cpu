@@ -106,6 +106,9 @@ register_file registers(
 	.read_data_1(reg_read_1)
 );
 
+wire branch_eq;
+assign branch_eq = reg_read_0 == reg_read_1;
+
 wire [31:0] immediate_signext;
 
 sign_extend1632 immediate_extender(

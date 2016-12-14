@@ -16,13 +16,13 @@ module cpu(
 
 wire [31:0] branch_addr;
 wire [31:0] pc_value_next;
-wire pc_src_xm;
-wire [31:0] branch_result_xm;
+wire pc_src_branch_d;
+wire [31:0] branch_adder_result;
 
 mux32 branch_mux(
 	.a(pc_value_next),
-	.b(branch_result_xm),
-	.sel(pc_src_xm),
+	.b(branch_adder_result),
+	.sel(pc_src_branch_d),
 	.result(branch_addr)
 );
 
@@ -155,9 +155,22 @@ controller cpu_controller(
 	.branch(branch)
 );
 
+wire [31:0] shifted_immediate;
+sll2_32 jump_shifter(
+	.in(immediate_signext),
+	.out(shifted_immediate)
+);
+
+add32u branch_adder(
+	.a(buffered_next_pc_value),
+	.b(shifted_immediate),
+	.result(branch_adder_result)
+);
+
+assign pc_src_branch_d = branch && branch_eq;
+
 wire [31:0] reg_read_0_dx;
 wire [31:0] reg_read_1_dx;
-wire [31:0] pc_value_dx;
 wire [31:0] immediate_dx;
 wire [2:0] alu_op_dx;
 wire [4:0] rd_addr_dx;
@@ -168,13 +181,11 @@ wire reg_write_dx;
 wire mem_reg_dx;
 wire reg_dst_dx;
 wire alu_src_dx;
-wire branch_dx;
 
 dx_pipeline_register dx_reg(
 	.clk(clk),
 	.rst(rst),
 	.stall_b(load_enable),
-	.pc_value_next(buffered_next_pc_value),
 	.read_data_0(reg_read_0),
 	.read_data_1(reg_read_1),
 	.immediate(immediate_signext),
@@ -188,8 +199,6 @@ dx_pipeline_register dx_reg(
 	.rd_addr(rd_addr),
 	.rs_addr(rs_addr),
 	.alu_src(alu_src),
-	.branch(branch),
-	.pc_value(pc_value_dx),
 	.read_data_buffered_0(reg_read_0_dx),
 	.read_data_buffered_1(reg_read_1_dx),
 	.immediate_buffered(immediate_dx),
@@ -202,8 +211,7 @@ dx_pipeline_register dx_reg(
 	.rt_addr_buffered(rt_addr_dx),
 	.rd_addr_buffered(rd_addr_dx),
 	.rs_addr_buffered(rs_addr_dx),
-	.alu_src_buffered(alu_src_dx),
-	.branch_buffered(branch_dx)
+	.alu_src_buffered(alu_src_dx)
 );
 
 /*
@@ -226,19 +234,6 @@ forwarding_unit forwarding_unit(
 	.write_reg_mw(reg_write_mw),
 	.alu_a_mux_sel(alu_a_mux_sel),
 	.alu_b_mux_sel(alu_b_mux_sel)
-);
-
-wire [31:0] shifted_immediate;
-sll2_32 jump_shifter(
-	.in(immediate_dx),
-	.out(shifted_immediate)
-);
-
-wire [31:0] branch_adder_result;
-add32u branch_adder(
-	.a(pc_value_dx),
-	.b(shifted_immediate),
-	.result(branch_adder_result)
 );
 
 wire [4:0] reg_write_addr_dx;
@@ -295,29 +290,24 @@ wire alu_zero_xm;
 wire mem_read_xm;
 wire mem_write_xm;
 wire mem_reg_xm;
-wire branch_xm;
 
 xm_pipeline_register xm_reg(
 	.clk(clk),
 	.rst(rst),
 	.alu_result(alu_result),
 	.alu_zero(alu_zero),
-	.branch_result(branch_adder_result),
 	.write_reg_addr(reg_write_addr_dx),
 	.mem_read(mem_read_dx),
 	.mem_write(mem_write_dx),
 	.mem_reg(mem_reg_dx),
-	.branch(branch_dx),
 	.reg_write(reg_write_dx),
 	.mem_write_data(reg_read_1_dx),
 	.alu_result_buffered(alu_result_xm),
 	.alu_zero_buffered(alu_zero_xm),
-	.branch_result_buffered(branch_result_xm),
 	.write_reg_addr_buffered(write_reg_addr_xm),
 	.mem_read_buffered(mem_read_xm),
 	.mem_write_buffered(mem_write_xm),
 	.mem_reg_buffered(mem_reg_xm),
-	.branch_buffered(branch_xm),
 	.reg_write_buffered(reg_write_xm),
 	.mem_write_data_buffered(mem_write_data_xm)
 );
@@ -331,8 +321,6 @@ assign mem_write_data = mem_write_data_xm;
 assign data_addr = alu_result_xm;
 assign mem_read_en = mem_read_xm;
 assign mem_write_en = mem_write_xm;
-
-assign pc_src_xm = branch_xm && alu_zero_xm;
 
 wire [31:0] mem_read_data_mw;
 wire [31:0] alu_result_mw;

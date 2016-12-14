@@ -2,7 +2,6 @@ module dx_pipeline_register(
 	input wire clk,
 	input wire rst,
 	input wire stall_b,
-	input wire [31:0] pc_value_next,
 	input wire [31:0] read_data_0,
 	input wire [31:0] read_data_1,
 	input wire [31:0] immediate,
@@ -16,8 +15,6 @@ module dx_pipeline_register(
 	input wire [4:0] rd_addr,
 	input wire [4:0] rs_addr,
 	input wire alu_src,
-	input wire branch,
-	output reg [31:0] pc_value,
 	output reg [31:0] read_data_buffered_0,
 	output reg [31:0] read_data_buffered_1,
 	output reg [31:0] immediate_buffered,
@@ -30,12 +27,10 @@ module dx_pipeline_register(
 	output reg [4:0] rt_addr_buffered,
 	output reg [4:0] rd_addr_buffered,
 	output reg [4:0] rs_addr_buffered,
-	output reg alu_src_buffered,
-	output reg branch_buffered
+	output reg alu_src_buffered
 );
 
 always @ (posedge rst) begin
-	branch_buffered = 1'b0;
 	alu_op_buffered = 3'h1; // Noop
 end
 
@@ -49,7 +44,6 @@ always @ (posedge clk) begin
 		rd_addr_buffered <= rd_addr;
 		rs_addr_buffered <= rs_addr;
 	end
-	pc_value <= pc_value_next;
 	read_data_buffered_0 <= read_data_0;
 	read_data_buffered_1 <= read_data_1;
 	immediate_buffered <= immediate;
@@ -60,8 +54,6 @@ always @ (posedge clk) begin
 	mem_reg_buffered <= mem_reg;
 	reg_dst_buffered <= reg_dst;
 	alu_src_buffered <= alu_src;
-	branch_buffered <= branch;
-	
 end
 
 endmodule

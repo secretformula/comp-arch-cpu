@@ -34,15 +34,7 @@ always @ (*) begin
   end
 
   //Control Hazard detection
-  //Branch
-  if(branch && equals_result) begin
-    flush <= 1'b1;
-  end else begin
-    flush <= 1'b0;
-  end
-
-  //Jump
-  if(jump) begin
+  if(jump || (branch && equals_result)) begin
     flush <= 1'b1;
   end else begin
     flush <= 1'b0;

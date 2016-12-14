@@ -40,6 +40,7 @@ always @ (*) begin
 		mem_write <= 1'b0;
 		mem_reg <= 1'b0;
 		alu_src <= 1'b0;
+		//jump <= 1'b0;
 		//branch <= 1'b0;
 	end else begin
 		case(opcode)
@@ -53,6 +54,7 @@ always @ (*) begin
 			alu_op <= 3'h6;
 			alu_src <= 1'b0;
 			branch <= 1'b1;
+			jump <= 1'b0;
 		end
 		6'h0: // R type instructions
 		begin
@@ -63,6 +65,7 @@ always @ (*) begin
 			reg_write <= 1'b1;
 			alu_src <= 1'b0;
 			branch <= 1'b0;
+			jump <= 1'b0;
 			case(r_funct)
 			6'h20: // add
 			begin
@@ -84,6 +87,7 @@ always @ (*) begin
 			alu_op <= 3'h0;
 			alu_src <= 1'b1;
 			branch <= 1'b0;
+			jump <= 1'b0;
 		end
 		6'h2b: // sw
 		begin
@@ -95,6 +99,7 @@ always @ (*) begin
 			alu_op <= 3'h0;
 			alu_src <= 1'b1;
 			branch <= 1'b0;
+			jump <= 1'b0;
 		end
 		6'h08: // addi
 		begin
@@ -106,6 +111,7 @@ always @ (*) begin
 			alu_op <= 3'h0;
 			alu_src <= 1'b1;
 			branch <= 1'b0;
+			jump <= 1'b0;
 		end
 		6'h02: // jump
 		begin

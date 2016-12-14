@@ -52,7 +52,6 @@ wire [31:0] buffered_next_pc_value;
 fd_pipeline_register fd_reg(
 	.clk(clk),
 	.rst(rst),
-	.load_enable(load_enable),
 	.pc_value_next(pc_value_next),
 	.next_instruction(instr),
 	.instruction(buffered_instruction),
@@ -175,6 +174,23 @@ dx_pipeline_register dx_reg(
 	.alu_src_buffered(alu_src_dx),
 	.branch_buffered(branch_dx)
 );
+
+
+wire load_enable;
+wire flush;
+
+dx_hazard_detection hazard_detection(
+	.clk(clk),
+	.rst(rst),
+	.instruction(buffered_instruction),
+	.dx_rt(rt_addr_dx),
+	.jump(jump),
+	.branch(branch),
+	//.equals_result(),
+	.dx_mem_read(mem_read_dx),
+	.load_enable(load_enable),
+	.flush(flush)
+	);
 
 /*
  * Execute stage

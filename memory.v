@@ -46,7 +46,8 @@ initial
 //	end    
 
     //file = $fopen("add2.hex","r");
-    file = $fopen("test_prog.hex","r");
+    //file = $fopen("test_prog.hex","r");
+    file = $fopen("test_forwarding.hex","r");
     if (file == `NULL)
         disable file_block;
 

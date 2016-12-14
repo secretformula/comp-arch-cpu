@@ -20,11 +20,15 @@ always @ (*) begin
 		alu_a_mux_sel <= 2'b10;
 	end else if(write_reg_mw && (write_reg_addr_mw != 0) && (write_reg_addr_mw == rs_addr_dx)) begin
 		alu_a_mux_sel <= 2'b01;
+	end else begin
+		alu_a_mux_sel <= 2'b00;
 	end
 	if(write_reg_xm && (write_reg_addr_xm != 0) && (write_reg_addr_xm == rt_addr_dx)) begin
 		alu_b_mux_sel <= 2'b10;
 	end else if(write_reg_mw && (write_reg_addr_mw != 0) && (write_reg_addr_mw == rt_addr_dx)) begin
 		alu_b_mux_sel <= 2'b01;
+	end else begin
+		alu_b_mux_sel <= 2'b00;
 	end
 end
 

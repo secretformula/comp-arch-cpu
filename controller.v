@@ -10,7 +10,8 @@ module controller(
 	output reg reg_dst,
 	output reg mem_reg,
 	output reg alu_src,
-	output reg branch
+	output reg branch,
+	output reg halt
 );
 
 wire [5:0] opcode;
@@ -29,6 +30,7 @@ always @ (posedge rst) begin
 	alu_src <= 1'b0;
 	branch <= 1'b0;
 	jump <= 1'b0;
+	halt <= 1'b0;
 end
 
 always @ (*) begin
@@ -120,7 +122,13 @@ always @ (*) begin
 		end
 		6'h3f: // halt
 		begin
-			
+			reg_write <= 1'b0;
+			alu_op <= 3'h1;
+			mem_read <= 1'b0;
+			mem_write <= 1'b0;
+			mem_reg <= 1'b0;
+			alu_src <= 1'b0;
+			halt <= 1'b1;
 		end
 		endcase
 	end

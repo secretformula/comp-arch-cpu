@@ -37,11 +37,11 @@ mux32 jump_mux(
 );
 
 wire [31:0] pc_value;
-wire load_enable;
+wire pc_enable;
 program_counter pc(
 	.clk(clk),
 	.rst(rst),
-	.load_enable(load_enable),
+	.load_enable(pc_enable),
 	.next_addr(next_instr_addr),
 	.counter_value(pc_value)
 );
@@ -59,6 +59,7 @@ assign instr_addr = pc_value;
 wire [31:0] buffered_instruction;
 wire [31:0] buffered_next_pc_value;
 
+wire load_enable;
 wire flush;
 fd_pipeline_register fd_reg(
 	.clk(clk),
@@ -139,6 +140,7 @@ wire reg_write;
 wire mem_reg;
 wire reg_dst;
 wire alu_src;
+wire halt;
 
 controller cpu_controller(
 	.rst(rst),
@@ -152,8 +154,11 @@ controller cpu_controller(
 	.mem_reg(mem_reg),
 	.reg_dst(reg_dst),
 	.alu_src(alu_src),
-	.branch(branch)
+	.branch(branch),
+	.halt(halt)
 );
+
+assign pc_enable = load_enable && !halt;
 
 wire [31:0] shifted_immediate;
 sll2_32 jump_shifter(

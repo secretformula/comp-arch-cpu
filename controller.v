@@ -1,6 +1,7 @@
 module controller(
 	input wire rst,
 	input wire [31:0] instruction,
+	input wire stall_b,
 	output reg [2:0] alu_op,
 	output reg mem_read,
 	output reg mem_write,
@@ -31,6 +32,17 @@ always @ (posedge rst) begin
 end
 
 always @ (*) begin
+	if(!stall_b) begin
+		//Signals for Noop
+		reg_write <= 1'b0;
+		alu_op <= 3'h1;
+		mem_read <= 1'b0;
+		mem_write <= 1'b0;
+		mem_reg <= 1'b0;
+		alu_src <= 1'b0;
+		branch <= 1'b0;
+	end
+	else begin
 	case(opcode)
 	6'h04: // beq
 	begin

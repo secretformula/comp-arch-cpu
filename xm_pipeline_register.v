@@ -20,7 +20,6 @@ module xm_pipeline_register(
 	output reg mem_reg_buffered,
 	output reg branch_buffered,
 	output reg reg_write_buffered,
-	output reg jump_buffered,
 	output reg [31:0] mem_write_data_buffered
 );
 

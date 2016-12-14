@@ -8,7 +8,6 @@ module dx_pipeline_register(
 	input wire [2:0] alu_op,
 	input wire mem_read,
 	input wire mem_write,
-	input wire jump,
 	input wire reg_write,
 	input wire mem_reg,
 	input wire reg_dst,
@@ -24,7 +23,6 @@ module dx_pipeline_register(
 	output reg [2:0] alu_op_buffered,
 	output reg mem_read_buffered,
 	output reg mem_write_buffered,
-	output reg jump_buffered,
 	output reg reg_write_buffered,
 	output reg mem_reg_buffered,
 	output reg reg_dst_buffered,
@@ -48,7 +46,6 @@ always @ (posedge clk) begin
 	alu_op_buffered <= alu_op;
 	mem_read_buffered <= mem_read;
 	mem_write_buffered <= mem_write;
-	jump_buffered <= jump;
 	reg_write_buffered <= reg_write;
 	mem_reg_buffered <= mem_reg;
 	reg_dst_buffered <= reg_dst;

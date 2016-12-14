@@ -14,15 +14,25 @@ module cpu(
  * Instruction fetch stage
  */
 
-wire [31:0] next_instr_addr;
+wire [31:0] branch_addr;
 wire [31:0] pc_value_next;
 wire pc_src_xm;
-wire [31:0] jump_result_xm;
+wire [31:0] branch_result_xm;
 
-mux32 pc_input_mux(
+mux32 branch_mux(
 	.a(pc_value_next),
-	.b(jump_result_xm),
+	.b(branch_result_xm),
 	.sel(pc_src_xm),
+	.result(branch_addr)
+);
+
+wire [31:0] jump_addr;
+wire [31:0] next_instr_addr;
+wire jump;
+mux32 jump_mux(
+	.a(branch_addr),
+	.b(jump_addr),
+	.sel(jump),
 	.result(next_instr_addr)
 );
 
@@ -66,11 +76,17 @@ wire [4:0] rt_addr;
 wire [4:0] rd_addr;
 wire [4:0] write_reg_addr_mw;
 wire [15:0] immediate;
+wire [25:0] jump_offset;
 
 assign rs_addr = buffered_instruction[25:21];
 assign rt_addr = buffered_instruction[20:16];
 assign rd_addr = buffered_instruction[15:11];
 assign immediate = buffered_instruction [15:0];
+assign jump_offset = buffered_instruction [25:0];
+
+wire [27:0] jump_offset_shifted;
+assign jump_offset_shifted = jump_offset << 2;
+assign jump_addr = {pc_value_next[31:28], jump_offset_shifted};
 
 wire [31:0] reg_read_0;
 wire [31:0] reg_read_1;
@@ -89,6 +105,9 @@ register_file registers(
 	.read_data_1(reg_read_1)
 );
 
+wire branch_eq;
+assign branch_eq = reg_read_0 == reg_read_1;
+
 wire [31:0] immediate_signext;
 
 sign_extend1632 immediate_extender(
@@ -99,7 +118,6 @@ sign_extend1632 immediate_extender(
 wire [2:0] alu_op;
 wire mem_read;
 wire mem_write;
-wire jump;
 wire reg_write;
 wire mem_reg;
 wire reg_dst;
@@ -148,7 +166,6 @@ dx_pipeline_register dx_reg(
 	.alu_op(alu_op),
 	.mem_read(mem_read),
 	.mem_write(mem_write),
-	.jump(jump),
 	.reg_write(reg_write),
 	.mem_reg(mem_reg),
 	.reg_dst(reg_dst),
@@ -164,7 +181,6 @@ dx_pipeline_register dx_reg(
 	.alu_op_buffered(alu_op_dx),
 	.mem_read_buffered(mem_read_dx),
 	.mem_write_buffered(mem_write_dx),
-	.jump_buffered(jump_dx),
 	.reg_write_buffered(reg_write_dx),
 	.mem_reg_buffered(mem_reg_dx),
 	.reg_dst_buffered(reg_dst_dx),
@@ -220,11 +236,11 @@ sll2_32 jump_shifter(
 	.out(shifted_immediate)
 );
 
-wire [31:0] jump_adder_result;
-add32u jump_adder(
+wire [31:0] branch_adder_result;
+add32u branch_adder(
 	.a(pc_value_dx),
 	.b(shifted_immediate),
-	.result(jump_adder_result)
+	.result(branch_adder_result)
 );
 
 wire [4:0] reg_write_addr_dx;
@@ -288,7 +304,7 @@ xm_pipeline_register xm_reg(
 	.rst(rst),
 	.alu_result(alu_result),
 	.alu_zero(alu_zero),
-	.jump_result(jump_adder_result),
+	.branch_result(branch_adder_result),
 	.write_reg_addr(reg_write_addr_dx),
 	.mem_read(mem_read_dx),
 	.mem_write(mem_write_dx),
@@ -298,7 +314,7 @@ xm_pipeline_register xm_reg(
 	.mem_write_data(reg_read_1_dx),
 	.alu_result_buffered(alu_result_xm),
 	.alu_zero_buffered(alu_zero_xm),
-	.jump_result_buffered(jump_result_xm),
+	.branch_result_buffered(branch_result_xm),
 	.write_reg_addr_buffered(write_reg_addr_xm),
 	.mem_read_buffered(mem_read_xm),
 	.mem_write_buffered(mem_write_xm),

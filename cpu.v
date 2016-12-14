@@ -37,9 +37,11 @@ mux32 jump_mux(
 );
 
 wire [31:0] pc_value;
+wire load_enable;
 program_counter pc(
 	.clk(clk),
 	.rst(rst),
+	.load_enable(load_enable),
 	.next_addr(next_instr_addr),
 	.counter_value(pc_value)
 );
@@ -60,6 +62,7 @@ wire [31:0] buffered_next_pc_value;
 fd_pipeline_register fd_reg(
 	.clk(clk),
 	.rst(rst),
+	.load_enable(load_enable),
 	.pc_value_next(pc_value_next),
 	.next_instruction(instr),
 	.instruction(buffered_instruction),
@@ -121,6 +124,7 @@ wire branch;
 
 controller cpu_controller(
 	.rst(rst),
+	.stall_b(load_enable),
 	.instruction(buffered_instruction),
 	.alu_op(alu_op),
 	.mem_read(mem_read),

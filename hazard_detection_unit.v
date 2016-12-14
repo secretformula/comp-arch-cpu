@@ -24,8 +24,9 @@ end
 
 //Load-use Hazard detection
 always @ (*) begin
-  if(dx_mem_read && (dx_rt == fd_rs_reg) ||
-    (dx_rt == fd_rt_reg)) begin
+  if((fd_rt_reg != 5'h00) && (
+    dx_mem_read && (dx_rt == fd_rs_reg) ||
+    (dx_rt == fd_rt_reg))) begin
         load_enable <= 1'b0;
     end
   else begin

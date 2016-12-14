@@ -1,7 +1,7 @@
 module program_counter(
 	input wire clk,
 	input wire rst,
-  input wire load_enable,
+  	input wire load_enable,
 	input wire [31:0] next_addr,
 	output reg [31:0] counter_value
 );

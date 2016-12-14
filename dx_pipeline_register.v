@@ -1,6 +1,7 @@
 module dx_pipeline_register(
 	input wire clk,
 	input wire rst,
+	input wire stall_b,
 	input wire [31:0] pc_value_next,
 	input wire [31:0] read_data_0,
 	input wire [31:0] read_data_1,
@@ -39,6 +40,15 @@ always @ (posedge rst) begin
 end
 
 always @ (posedge clk) begin
+	if(!stall_b) begin
+		rt_addr_buffered <= 5'h0;
+		rd_addr_buffered <= 5'h0;
+		rs_addr_buffered <= 5'h0;
+	end else begin
+		rt_addr_buffered <= rt_addr;
+		rd_addr_buffered <= rd_addr;
+		rs_addr_buffered <= rs_addr;
+	end
 	pc_value <= pc_value_next;
 	read_data_buffered_0 <= read_data_0;
 	read_data_buffered_1 <= read_data_1;
@@ -51,9 +61,7 @@ always @ (posedge clk) begin
 	reg_dst_buffered <= reg_dst;
 	alu_src_buffered <= alu_src;
 	branch_buffered <= branch;
-	rt_addr_buffered <= rt_addr;
-	rd_addr_buffered <= rd_addr;
-	rs_addr_buffered <= rs_addr;
+	
 end
 
 endmodule

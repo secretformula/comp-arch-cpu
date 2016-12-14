@@ -40,7 +40,7 @@ always @ (*) begin
 		mem_write <= 1'b0;
 		mem_reg <= 1'b0;
 		alu_src <= 1'b0;
-		branch <= 1'b0;
+		//branch <= 1'b0;
 	end else begin
 		case(opcode)
 		6'h04: // beq

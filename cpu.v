@@ -63,6 +63,7 @@ wire flush;
 fd_pipeline_register fd_reg(
 	.clk(clk),
 	.flush(flush),
+	.write_en(load_enable),
 	.pc_value_next(pc_value_next),
 	.next_instruction(instr),
 	.instruction(buffered_instruction),
@@ -116,6 +117,21 @@ sign_extend1632 immediate_extender(
 	.out(immediate_signext)
 );
 
+wire branch;
+wire [4:0] rt_addr_dx;
+wire mem_read_dx;
+hazard_detection_unit hazard_detection(
+	.rst(rst),
+	.instruction(buffered_instruction),
+	.dx_rt(rt_addr_dx),
+	.jump(jump),
+	.branch(branch),
+	.equals_result(branch_eq),
+	.dx_mem_read(mem_read_dx),
+	.load_enable(load_enable),
+	.flush(flush)
+);
+
 wire [2:0] alu_op;
 wire mem_read;
 wire mem_write;
@@ -123,7 +139,6 @@ wire reg_write;
 wire mem_reg;
 wire reg_dst;
 wire alu_src;
-wire branch;
 
 controller cpu_controller(
 	.rst(rst),
@@ -145,10 +160,8 @@ wire [31:0] reg_read_1_dx;
 wire [31:0] pc_value_dx;
 wire [31:0] immediate_dx;
 wire [2:0] alu_op_dx;
-wire [4:0] rt_addr_dx;
 wire [4:0] rd_addr_dx;
 wire [4:0] rs_addr_dx;
-wire mem_read_dx;
 wire mem_write_dx;
 wire jump_dx;
 wire reg_write_dx;
@@ -160,6 +173,7 @@ wire branch_dx;
 dx_pipeline_register dx_reg(
 	.clk(clk),
 	.rst(rst),
+	.stall_b(load_enable),
 	.pc_value_next(buffered_next_pc_value),
 	.read_data_0(reg_read_0),
 	.read_data_1(reg_read_1),
@@ -190,18 +204,6 @@ dx_pipeline_register dx_reg(
 	.rs_addr_buffered(rs_addr_dx),
 	.alu_src_buffered(alu_src_dx),
 	.branch_buffered(branch_dx)
-);
-
-hazard_detection_unit hazard_detection(
-	.rst(rst),
-	.instruction(buffered_instruction),
-	.dx_rt(rt_addr_dx),
-	.jump(jump),
-	.branch(branch),
-	.equals_result(branch_eq),
-	.dx_mem_read(mem_read_dx),
-	.load_enable(load_enable),
-	.flush(flush)
 );
 
 /*

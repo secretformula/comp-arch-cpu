@@ -3,8 +3,10 @@ module alu(
 	input wire [31:0] b,
 	input wire [2:0] op,
 	output reg [31:0] result,
-	output reg zero
+	output wire zero
 );
+
+assign zero = result == 32'h0;
 
 always @ (*) begin
 	case(op)
@@ -17,10 +19,6 @@ always @ (*) begin
 	3'h6: result = (a == b) ? 32'h0 : 32'h1; // beq
 	3'h7: result = (a != b) ? 32'h0 : 32'h1; // beq
 	endcase
-
-	if(result == 32'h0) begin
-		zero = 1'b1;
-	end
 end
 
 endmodule

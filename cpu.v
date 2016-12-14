@@ -33,7 +33,7 @@ mux32 jump_mux(
 	.a(branch_addr),
 	.b(jump_addr),
 	.sel(jump),
-	.result(next_instr_addr),
+	.result(next_instr_addr)
 );
 
 wire [31:0] pc_value;
